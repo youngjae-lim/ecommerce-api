@@ -16,8 +16,8 @@ app.get('/', (req, res) => {
   res.send('e-commerce api')
 })
 
-app.use(notFoundMiddleware)
-app.use(errorHandlerMiddleware)
+app.use(notFoundMiddleware) // 404 error before erorrHandler middleware. The order matters!
+app.use(errorHandlerMiddleware) // handles errors from the existing routes only
 
 const port = process.env.PORT || 5000
 
