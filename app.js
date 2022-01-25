@@ -4,9 +4,11 @@ import dotenv from 'dotenv'
 import 'express-async-errors'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
 
 // routes
 import authRouter from './routes/authRoutes.js'
+import userRouter from './routes/userRoutes.js'
 
 // middleware
 import notFoundMiddleware from './middleware/not-found.js'
@@ -19,6 +21,9 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev')) // logger middleware for HTTP request
 }
 
+// security packages
+app.use(cors())
+
 // parse incoming requests with JSON payloads
 app.use(express.json())
 
@@ -26,6 +31,7 @@ app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
 
 app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/users', userRouter)
 
 app.get('/', (req, res) => {
   res.send('e-commerce api')
@@ -36,6 +42,7 @@ app.get('/api/v1', (req, res) => {
   res.send('e-commerce api')
 })
 
+// middleware
 app.use(notFoundMiddleware) // 404 error before erorrHandler middleware. The order matters!
 app.use(errorHandlerMiddleware) // handles errors from the existing routes only
 
