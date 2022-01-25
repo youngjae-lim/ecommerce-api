@@ -1,4 +1,4 @@
-import { UnauthenticatedError } from '../errors/index.js'
+import { UnauthenticatedError, UnauthorizedError } from '../errors/index.js'
 import { isTokenValid } from '../utils/index.js'
 
 const authenticateUser = async (req, res, next) => {
@@ -18,4 +18,11 @@ const authenticateUser = async (req, res, next) => {
   }
 }
 
-export { authenticateUser }
+const authorizePermissions = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    throw new UnauthorizedError('Unauthorized to access this route')
+  }
+  next()
+}
+
+export { authenticateUser, authorizePermissions }
