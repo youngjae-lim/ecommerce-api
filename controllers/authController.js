@@ -1,7 +1,7 @@
 import User from '../models/User.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, UnauthenticatedError } from '../errors/index.js'
-import { createJWT, isTokenValid } from '../utils/index.js'
+import { attachCookiesToResponse } from '../utils/index.js'
 
 const register = async (req, res) => {
   const { name, email, password } = req.body
@@ -22,14 +22,7 @@ const register = async (req, res) => {
   const user = await User.create({ name, email, password, role })
 
   const tokenUser = { name: user.name, userId: user._id, role: user.role }
-  const token = createJWT({ payload: tokenUser })
-
-  const oneDay = 1000 * 60 * 60 * 24 // 24 hours
-
-  res.cookie('token', token, {
-    httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
-  })
+  attachCookiesToResponse({ res, user: tokenUser })
 
   res.status(StatusCodes.CREATED).json({ user: tokenUser })
 }

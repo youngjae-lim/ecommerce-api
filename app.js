@@ -23,7 +23,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(express.json())
 
 // make cookie accessible in the client
-app.use(cookieParser())
+app.use(cookieParser(process.env.JWT_SECRET))
 
 app.use('/api/v1/auth', authRouter)
 
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/v1', (req, res) => {
-  console.log(req.cookies)
+  console.log(req.signedCookies)
   res.send('e-commerce api')
 })
 
