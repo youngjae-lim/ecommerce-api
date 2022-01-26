@@ -31,6 +31,8 @@ const UserSchema = new mongoose.Schema({
 })
 
 UserSchema.pre('save', async function () {
+  // don't hash a password in case of not modifying a password
+  // that is, when you simply update a user info such as name, email, don't hash the password
   if (!this.isModified('password')) return
 
   const salt = await bcrypt.genSalt(10)

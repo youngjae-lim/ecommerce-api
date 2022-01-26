@@ -32,11 +32,13 @@ const updateUser = async (req, res) => {
     throw new BadRequestError('Please provide all values')
   }
 
-  const user = await User.findOneAndUpdate(
-    { _id: req.user.userId },
-    { email, name },
-    { new: true, runValidators: true }
-  )
+  const user = await User.findOne({ _id: req.user.userId })
+
+  // manual update
+  user.email = email
+  user.name = name
+
+  await user.save() // this will invoke UserSchema.pre() before it saves the user
 
   const tokenUser = createTokenUser(user)
   attachCookiesToResponse({ res, user: tokenUser })
