@@ -1,7 +1,13 @@
 import Product from '../models/Product.js'
+import { StatusCodes } from 'http-status-codes'
+import { NotFoundError, BadRequestError } from '../errors/index.js'
+import path from 'path'
 
 const createProduct = async (req, res) => {
-  res.send('create product')
+  // note that cookie attaches userId via middleware which made it available to use here
+  req.body.user = req.user.userId
+  const product = await Product.create(req.body)
+  res.status(StatusCodes.CREATED).json({ product })
 }
 
 const getAllProducts = async (req, res) => {

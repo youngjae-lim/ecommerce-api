@@ -17,7 +17,7 @@ const router = express.Router()
 router
   .route('/')
   .post([authenticateUser, authorizePermissions('admin')], createProduct)
-  .get(getAllProducts)
+  .get(getAllProducts) // open to public
 
 router
   .route('/uploadImage')
@@ -25,7 +25,7 @@ router
 
 router
   .route('/:id')
-  .get(getSingleProduct)
+  .get(getSingleProduct) // open to public
   .patch([authenticateUser, authorizePermissions('admin')], updateProduct)
   .delete([authenticateUser, authorizePermissions('admin')], deleteProduct)
 
