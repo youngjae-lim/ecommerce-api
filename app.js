@@ -5,6 +5,7 @@ import 'express-async-errors'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
+import fileUpload from 'express-fileupload'
 
 // routes
 import authRouter from './routes/authRoutes.js'
@@ -30,6 +31,10 @@ app.use(express.json())
 
 // make cookie accessible in the client
 app.use(cookieParser(process.env.JWT_SECRET))
+
+// make /public directory static
+app.use(express.static('./public'))
+app.use(fileUpload())
 
 // routers
 app.use('/api/v1/auth', authRouter)
