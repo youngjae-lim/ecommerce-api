@@ -1,7 +1,7 @@
 import User from '../models/User.js'
 import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, UnauthenticatedError } from '../errors/index.js'
-import { attachCookiesToResponse } from '../utils/index.js'
+import { attachCookiesToResponse, createTokenUser } from '../utils/index.js'
 
 const register = async (req, res) => {
   const { name, email, password } = req.body
@@ -21,7 +21,7 @@ const register = async (req, res) => {
 
   const user = await User.create({ name, email, password, role })
 
-  const tokenUser = { name: user.name, userId: user._id, role: user.role }
+  const tokenUser = createTokenUser(user)
   attachCookiesToResponse({ res, user: tokenUser })
 
   res.status(StatusCodes.CREATED).json({ user: tokenUser })
@@ -45,7 +45,7 @@ const login = async (req, res) => {
     throw new UnauthenticatedError('Invalid Credentials')
   }
 
-  const tokenUser = { name: user.name, userId: user._id, role: user.role }
+  const tokenUser = createTokenUser(user)
   attachCookiesToResponse({ res, user: tokenUser })
 
   res.status(StatusCodes.CREATED).json({ user: tokenUser })
