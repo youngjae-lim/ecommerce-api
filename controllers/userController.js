@@ -6,7 +6,11 @@ import {
   UnauthenticatedError,
 } from '../errors/index.js'
 
-import { attachCookiesToResponse, createTokenUser } from '../utils/index.js'
+import {
+  attachCookiesToResponse,
+  createTokenUser,
+  checkPermissions,
+} from '../utils/index.js'
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: 'user' }).select('-password')
@@ -18,6 +22,8 @@ const getSingleUser = async (req, res) => {
   if (!user) {
     throw new NotFoundError(`No user with id: ${req.params.id}`)
   }
+
+  checkPermissions(req.user, user._id)
   res.status(StatusCodes.OK).json({ user })
 }
 
