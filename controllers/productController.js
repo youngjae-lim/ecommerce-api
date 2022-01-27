@@ -53,7 +53,8 @@ const deleteProduct = async (req, res) => {
     throw new NotFoundError(`No product with id: ${productId}`)
   }
 
-  await product.remove()
+  await product.remove() // will trigger the hook that deletes all associated reviews
+
   res.status(StatusCodes.OK).json({ msg: 'Success! Product removded!' })
 }
 
