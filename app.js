@@ -4,8 +4,14 @@ import dotenv from 'dotenv'
 import 'express-async-errors'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
-import cors from 'cors'
 import fileUpload from 'express-fileupload'
+
+// security
+import cors from 'cors'
+import rateLimiter from 'express-rate-limit'
+import helmet from 'helmet'
+import xss from 'xss-clean'
+import mongoSanitize from 'express-mongo-sanitize'
 
 // routers
 import authRouter from './routes/authRoutes.js'
@@ -26,7 +32,17 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // security packages
+app.set('trust proxy', 1)
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 mins
+    max: 60, // up to 60 requests
+  })
+)
+app.use(helmet())
 app.use(cors())
+app.use(xss())
+app.use(mongoSanitize())
 
 // parse incoming requests with JSON payloads
 app.use(express.json())
@@ -44,15 +60,6 @@ app.use('/api/v1/users', userRouter)
 app.use('/api/v1/products', productRouter)
 app.use('/api/v1/reviews', reviewRouter)
 app.use('/api/v1/orders', orderRouter)
-
-app.get('/', (req, res) => {
-  res.send('e-commerce api')
-})
-
-app.get('/api/v1', (req, res) => {
-  console.log(req.signedCookies)
-  res.send('e-commerce api')
-})
 
 // middleware
 app.use(notFoundMiddleware) // 404 error before erorrHandler middleware. The order matters!
